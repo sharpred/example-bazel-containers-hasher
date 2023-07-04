@@ -1,4 +1,4 @@
-load("@rules_go//go:def.bzl", "go_binary", "go_library")
+load("@rules_go//go:def.bzl", "go_binary", "go_library", "go_cross_binary")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_tarball")
 
@@ -19,15 +19,23 @@ go_binary(
     visibility = ["//visibility:public"],
 )
 
+go_cross_binary(
+    name = "api_linux",
+    target = ":api",
+    platform = "@rules_go//go/toolchain:linux_amd64",
+    visibility = ["//visibility:public"],
+)
+
+
 pkg_tar(
     name = "api_layer",
-    srcs = [":api"],
+    srcs = [":api_linux"],
 )
 
 oci_image(
     name = "image",
     base = "@distroless_base",
-    entrypoint = ["/api"],
+    entrypoint = ["/api_linux"],
     tars = [":api_layer"],
 )
 
