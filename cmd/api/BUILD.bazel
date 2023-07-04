@@ -1,5 +1,4 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
-
 go_library(
     name = "api_lib",
     srcs = ["main.go"],
@@ -15,4 +14,11 @@ go_binary(
     name = "api",
     embed = [":api_lib"],
     visibility = ["//visibility:public"],
+)
+
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+
+pkg_tar(
+    name = "tar",
+    srcs = [":api"],
 )
